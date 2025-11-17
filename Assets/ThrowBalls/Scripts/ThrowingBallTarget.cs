@@ -94,9 +94,9 @@ public class ThrowingBallTarget : MonoBehaviour
 
     public void DisableTarget()
     {
+        //rb.linearVelocity = Vector3.zero;
         rb.isKinematic = true;
         rb.useGravity = false;
-        rb.linearVelocity = Vector3.zero;
         hasBeenHit = false;
         if (appearTween != null)
         {
@@ -119,9 +119,9 @@ public class ThrowingBallTarget : MonoBehaviour
         transform.localPosition = initPos;
         transform.rotation = initRot;
         dyno.transform.localScale = initScale;
+        //rb.linearVelocity = Vector3.zero;
         rb.isKinematic = true;
         rb.useGravity = false;
-        rb.linearVelocity = Vector3.zero;
         hasBeenHit = false;
         if(appearTween!=null)
         {

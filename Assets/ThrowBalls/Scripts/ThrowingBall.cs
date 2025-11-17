@@ -67,6 +67,8 @@ public class ThrowingBall : GenericDragAndDrop3D_GameObject
     {
         //AudioManager.Instance.PlaySound2D("ThrowBall");
         trail.SetActive(true);
+        GameObject s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        s.transform.position = transform.position + movement*power;
         rb.AddForce(movement * power, ForceMode.Impulse);
         if (shakeTween != null)
         {
@@ -82,7 +84,7 @@ public class ThrowingBall : GenericDragAndDrop3D_GameObject
             throwEffe.Stop();
             transform.position = initPos;
             transform.rotation = initRot;
-            rb.isKinematic = true;
+            //rb.isKinematic = true;
             rb.linearVelocity = Vector3.zero;
             DOVirtual.DelayedCall(0.01f, () => rb.isKinematic = false);
         });

@@ -2,6 +2,7 @@
 using UnityEngine;
 using DG.Tweening;
 using System.Linq;
+using UnityEngine.InputSystem;
 
 public class GenericDragAndDrop3D_Manager : MonoBehaviour
 {
@@ -42,8 +43,8 @@ public class GenericDragAndDrop3D_Manager : MonoBehaviour
     }
 
     virtual protected void Update()
-    {               
-        ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+    {
+        ray = mainCamera.ScreenPointToRay(GetInputPosition());
         if (!isDragging)
         {
             if (Physics.Raycast(ray, out hit, 100f, draggablesLayerMask))
@@ -73,7 +74,7 @@ public class GenericDragAndDrop3D_Manager : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (IsInputDown())
         {
             BeginDragging();
         }
@@ -83,7 +84,7 @@ public class GenericDragAndDrop3D_Manager : MonoBehaviour
             OnDragging();
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (IsInputUp())
         {
             if (isDragging && currentDraggableObject != null)
             {
@@ -94,7 +95,7 @@ public class GenericDragAndDrop3D_Manager : MonoBehaviour
 
     virtual protected void OnDragging()
     {
-        Vector3 mousePosition = Input.mousePosition;
+        Vector3 mousePosition = GetInputPosition();
         mousePosition.z = mainCamera.WorldToScreenPoint(currentDraggableObject.transform.position).z;
         Vector3 newPosition = mainCamera.ScreenToWorldPoint(mousePosition);
         newPosition = movementPlane.ClosestPointOnPlane(newPosition);
@@ -212,5 +213,57 @@ public class GenericDragAndDrop3D_Manager : MonoBehaviour
         dropTween = currentDraggableObject.transform.DOMove(dropPosition, dropDuration).SetEase(dropEase);
         currentDraggableObject.OnEndDrag();
         currentDraggableObject = null;
+    }
+
+    protected Vector2 GetInputPosition()
+    {
+        // Check for touch input
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+        {
+            return Touchscreen.current.primaryTouch.position.ReadValue();
+        }
+
+        // Fallback to mouse input
+        if (Mouse.current != null)
+        {
+            return Mouse.current.position.ReadValue();
+        }
+
+        // Default to zero if no input device is detected
+        return Vector2.zero;
+    }
+
+    protected bool IsInputDown()
+    {
+        // Check for touch input
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+        {
+            return true;
+        }
+
+        // Fallback to mouse input
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected bool IsInputUp()
+    {
+        // Check for touch input
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasReleasedThisFrame)
+        {
+            return true;
+        }
+
+        // Fallback to mouse input
+        if (Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

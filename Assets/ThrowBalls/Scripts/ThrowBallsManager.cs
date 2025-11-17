@@ -61,7 +61,7 @@ public class ThrowBallsManager : GenericDragAndDrop3D_Manager
         DOVirtual.DelayedCall(1f, () =>
         {
             tutPanel.DOAnchorPos(tutIn.anchoredPosition, tutAnimDuration).SetEase(tutInEase);
-
+            //StartGame();
         });
     }
 
@@ -161,7 +161,7 @@ public class ThrowBallsManager : GenericDragAndDrop3D_Manager
         timeSpentDragging = 0;
         if (currentDraggableObject != null)
         {
-            initialMousePosition = Input.mousePosition;
+            initialMousePosition = GetInputPosition();
             initialWorldPosition = currentDraggableObject.transform.position;
             isDragging = true;
             initialWorldPosition = currentDraggableObject.transform.position;
@@ -172,7 +172,7 @@ public class ThrowBallsManager : GenericDragAndDrop3D_Manager
     override protected void OnDragging()
     {
         timeSpentDragging += Time.deltaTime;
-        Vector3 currentMousePos = Input.mousePosition;
+        Vector3 currentMousePos = GetInputPosition();
         currentMousePos.z = mainCamera.WorldToScreenPoint(movementPlanePosition.position).z;
         Vector3 newPosition = mainCamera.ScreenToWorldPoint(currentMousePos);
         Vector3 worldMovement = (newPosition - initialWorldPosition).normalized;
@@ -182,7 +182,7 @@ public class ThrowBallsManager : GenericDragAndDrop3D_Manager
    
     override protected void EndDragging()
     {
-        Vector3 currentMousePos = Input.mousePosition;
+        Vector3 currentMousePos = GetInputPosition();
         currentMousePos.z = mainCamera.WorldToScreenPoint(movementPlanePosition.position).z;
         Vector3 newPosition = mainCamera.ScreenToWorldPoint(currentMousePos);      
 
