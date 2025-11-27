@@ -7,33 +7,12 @@ public class ThrowingBallTarget : MonoBehaviour
 {
     [SerializeField] int points = 10;
     [SerializeField] Vector2 minMaxForce = new Vector2(0.5f, 1.5f);
-
-    [Header("Appear Animation")]
-    [SerializeField] float appearYOffset = 1f;
-    [SerializeField] float appearDuration = 0.75f;
-    [SerializeField] Ease appearEase = Ease.OutBack;
-    [SerializeField] Ease hideEase = Ease.InBack;
-
-    [Header("Move Animation")]
-    [SerializeField] float moveXOffset = 1f;
-    [SerializeField] float moveDuration = 4f;
-    [SerializeField] Ease moveEase = Ease.Linear;
-
-    [Header("Wave Animation")]
-    [SerializeField] float waveAmplitude = 1f;
-    [SerializeField] float waveFrequency = 1f;
-    [SerializeField] float waveDuration = 3f;
-    [SerializeField] Ease waveEase = Ease.InOutSine;
-
-    [Header("Toggle Direction Animation")]
+    
+    [Header("Movement Configuration")]
+    [SerializeField] TargetMovementPattern movementPattern;
+    
+    [Header("Target Components")]
     [SerializeField] Transform dyno;
-    [SerializeField] float toggleDirectionDuration = 0.5f;
-    [SerializeField] Ease toggleDirectionEase = Ease.Linear;
-
-    [Header("Get Hit Animation")]
-    [SerializeField] float getHitAnimationDuration = 0.5f;
-    [SerializeField] float getHitRotateAmount = 720f;
-    [SerializeField] Ease getHitEase = Ease.OutQuad;
 
 
     bool hasBeenHit = false;
@@ -60,35 +39,57 @@ public class ThrowingBallTarget : MonoBehaviour
 
     public void EnableTarget()
     {
+        if (movementPattern == null)
+        {
+            Debug.LogWarning("No movement pattern assigned to target!");
+            return;
+        }
+
         transform.localPosition = initPos;
         transform.rotation = initRot;
         dyno.transform.localScale = initScale;
         col.enabled = false;
-        appearTween = transform.DOLocalMoveY(initPos.y + appearYOffset, appearDuration).SetEase(appearEase).OnComplete(() => 
+        
+        appearTween = transform.DOLocalMoveY(initPos.y + movementPattern.appearYOffset, movementPattern.appearDuration)
+            .SetEase(movementPattern.appearEase).OnComplete(() => 
         {
             col.enabled = true;
-            moveTween = transform.DOLocalMoveX(initPos.x + moveXOffset, moveDuration).SetEase(moveEase).SetLoops(-1, LoopType.Yoyo).OnStepComplete(() => 
+            
+            // Horizontal movement
+            if (movementPattern.enableHorizontalMovement)
             {
-                Vector3 dynoScale = dyno.localScale;
-                float z = dynoScale.z;
-                float rot = z > 0 ? 90 : -90;
-                dyno.DOLocalRotate(new Vector3(0, rot, 0), toggleDirectionDuration * 0.5f, RotateMode.Fast).SetEase(toggleDirectionEase).OnComplete(() => 
+                moveTween = transform.DOLocalMoveX(initPos.x + movementPattern.moveXOffset, movementPattern.moveDuration)
+                    .SetEase(movementPattern.moveEase).SetLoops(-1, LoopType.Yoyo);
+                
+                if (movementPattern.enableDirectionToggle)
                 {
-                    dynoScale.z = -z;
-                    dyno.localScale = dynoScale;
-                    dyno.DOLocalRotate(Vector3.zero, toggleDirectionDuration * 0.5f, RotateMode.Fast).SetEase(toggleDirectionEase);
-                });
-            });
+                    moveTween.OnStepComplete(() => 
+                    {
+                        Vector3 dynoScale = dyno.localScale;
+                        float z = dynoScale.z;
+                        float rot = z > 0 ? 90 : -90;
+                        dyno.DOLocalRotate(new Vector3(0, rot, 0), movementPattern.toggleDirectionDuration * 0.5f, RotateMode.Fast)
+                            .SetEase(movementPattern.toggleDirectionEase).OnComplete(() => 
+                        {
+                            dynoScale.z = -z;
+                            dyno.localScale = dynoScale;
+                            dyno.DOLocalRotate(Vector3.zero, movementPattern.toggleDirectionDuration * 0.5f, RotateMode.Fast)
+                                .SetEase(movementPattern.toggleDirectionEase);
+                        });
+                    });
+                }
+            }
 
-            float initY = initPos.y + appearYOffset;
-            waveTween = DOVirtual.Float(0, moveDuration, waveDuration, (t) =>
+            // Wave movement
+            if (movementPattern.enableWaveMovement)
             {
-                // Calculate the new y position using the sine function and apply the shift to our og y
-                float newY = waveAmplitude * Mathf.Sin(t * waveFrequency * Mathf.PI * 2);
-                transform.localPosition = new Vector3(transform.localPosition.x, initY + newY, transform.localPosition.z);
-            }).SetEase(waveEase).SetLoops(-1, LoopType.Yoyo);
-
-
+                float initY = initPos.y + movementPattern.appearYOffset;
+                waveTween = DOVirtual.Float(0, movementPattern.moveDuration, movementPattern.waveDuration, (t) =>
+                {
+                    float newY = movementPattern.waveAmplitude * Mathf.Sin(t * movementPattern.waveFrequency * Mathf.PI * 2);
+                    transform.localPosition = new Vector3(transform.localPosition.x, initY + newY, transform.localPosition.z);
+                }).SetEase(movementPattern.waveEase).SetLoops(-1, LoopType.Yoyo);
+            }
         });
     }
 
@@ -111,7 +112,10 @@ public class ThrowingBallTarget : MonoBehaviour
             waveTween.Kill();
         }
         col.enabled = false;
-        appearTween = transform.DOLocalMoveY(initPos.y, appearDuration).SetEase(hideEase);
+        if (movementPattern != null)
+        {
+            appearTween = transform.DOLocalMoveY(initPos.y, movementPattern.appearDuration).SetEase(movementPattern.hideEase);
+        }
     }
 
     public void ResetTarget()
@@ -154,15 +158,24 @@ public class ThrowingBallTarget : MonoBehaviour
         }
     }
 
+    public void SetMovementPattern(TargetMovementPattern pattern)
+    {
+        movementPattern = pattern;
+    }
+    
     void GetHitAnimation(bool left)
     {
-        moveTween.Pause();
-        waveTween.Pause();
-        float rot = left ? getHitRotateAmount : -getHitRotateAmount;
-        transform.DOBlendableLocalRotateBy(new Vector3(0, rot, 0), getHitAnimationDuration, RotateMode.FastBeyond360).SetEase(getHitEase).OnComplete(() =>
+        if (movementPattern == null) return;
+        
+        if (moveTween != null) moveTween.Pause();
+        if (waveTween != null) waveTween.Pause();
+        
+        float rot = left ? movementPattern.getHitRotateAmount : -movementPattern.getHitRotateAmount;
+        transform.DOBlendableLocalRotateBy(new Vector3(0, rot, 0), movementPattern.getHitAnimationDuration, RotateMode.FastBeyond360)
+            .SetEase(movementPattern.getHitEase).OnComplete(() =>
         {
-            moveTween.Play();
-            waveTween.Play();
+            if (moveTween != null) moveTween.Play();
+            if (waveTween != null) waveTween.Play();
             hasBeenHit = false;
             col.enabled = true;
         });
