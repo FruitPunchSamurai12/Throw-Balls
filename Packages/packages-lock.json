@@ -33,8 +33,8 @@
       "dependencies": {
         "com.unity.burst": "1.8.23",
         "com.unity.mathematics": "1.3.2",
-        "com.unity.nuget.mono-cecil": "1.11.5",
         "com.unity.test-framework": "1.4.6",
+        "com.unity.nuget.mono-cecil": "1.11.5",
         "com.unity.test-framework.performance": "3.0.3"
       },
       "url": "https://packages.unity.com"
@@ -44,6 +44,15 @@
       "depth": 1,
       "source": "builtin",
       "dependencies": {}
+    },
+    "com.unity.ide.antigravity": {
+      "version": "https://github.com/HarineshS/com.unity.ide.antigravity.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.test-framework": "1.1.9"
+      },
+      "hash": "794679caff96a62f747bb08bff8fe85bb0d0fc92"
     },
     "com.unity.ide.rider": {
       "version": "3.0.38",

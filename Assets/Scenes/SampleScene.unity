@@ -297,6 +297,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 504135781510454397, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
+      propertyPath: movementPattern
+      value: 
+      objectReference: {fileID: 11400000, guid: e6a819323961ec5478bf297e5e60ab69, type: 2}
+    - target: {fileID: 988876678626707231, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
+      propertyPath: movementPattern
+      value: 
+      objectReference: {fileID: 11400000, guid: e6a819323961ec5478bf297e5e60ab69, type: 2}
+    - target: {fileID: 1588305676838791665, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
+      propertyPath: movementPattern
+      value: 
+      objectReference: {fileID: 11400000, guid: e6a819323961ec5478bf297e5e60ab69, type: 2}
+    - target: {fileID: 1790065120022457517, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
+      propertyPath: movementPattern
+      value: 
+      objectReference: {fileID: 11400000, guid: e6a819323961ec5478bf297e5e60ab69, type: 2}
     - target: {fileID: 2346597538602789318, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -313,6 +329,26 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5492879110420292520, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 12.399902
+      objectReference: {fileID: 0}
+    - target: {fileID: 5793798513918527752, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
+      propertyPath: movementPattern
+      value: 
+      objectReference: {fileID: 11400000, guid: e6a819323961ec5478bf297e5e60ab69, type: 2}
+    - target: {fileID: 6021892036614983478, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
+      propertyPath: movementPattern
+      value: 
+      objectReference: {fileID: 11400000, guid: e6a819323961ec5478bf297e5e60ab69, type: 2}
+    - target: {fileID: 6526038097183550054, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 12.399902
+      objectReference: {fileID: 0}
+    - target: {fileID: 7139466511491857172, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
+      propertyPath: movementPattern
+      value: 
+      objectReference: {fileID: 11400000, guid: e6a819323961ec5478bf297e5e60ab69, type: 2}
     - target: {fileID: 8895186477838803027, guid: 5719f6e643fcc874aadfe7ba675840e6, type: 3}
       propertyPath: dropEase
       value: 1
